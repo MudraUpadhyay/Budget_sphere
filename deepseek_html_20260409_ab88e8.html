@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>BudgetSphere - Ghar Ka Hisaab</title>
+  <title>BudgetSphere - Ghar Ka Hisaab | Permanent Categories</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
   <style>
@@ -41,29 +41,35 @@
     .income-item { background: #f8f9fa; margin-bottom: 8px; padding: 10px; border-radius: 16px; }
     .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .modal-content { background: white; border-radius: 28px; padding: 24px; width: 90%; max-width: 320px; }
-    @media (max-width: 480px) { .summary-row { gap: 8px; } }
+    .empty-message { text-align: center; color: #6c757d; padding: 20px; font-style: italic; }
+    .toggle-link { color: #0F6E56; cursor: pointer; margin-top: 10px; font-size: 14px; }
+    .feature-list { columns: 2; column-gap: 16px; font-size: 13px; margin-top: 12px; }
+    .feature-list li { margin-bottom: 8px; list-style: none; padding-left: 20px; position: relative; }
+    .feature-list li::before { content: "✅"; position: absolute; left: 0; }
+    @media (max-width: 480px) { .feature-list { columns: 1; } }
   </style>
 </head>
 <body>
 <div id="app">
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen" class="login-container" style="display: flex;">
+  <!-- SIGN UP / LOGIN SCREEN -->
+  <div id="authScreen" class="login-container" style="display: flex;">
     <div style="text-align: center; width: 100%;">
       <div style="font-size: 48px;">💰</div>
       <h2>BudgetSphere</h2>
       <p style="color:#0F6E56;">Ghar Ka Hisaab</p>
-      <div style="margin: 20px 0;">
-        <input type="text" id="loginName" placeholder="Your Name" value="Rahul" style="text-align:center;">
-        <div class="pin-dots" id="pinDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div id="authForm" style="margin: 20px 0;">
+        <input type="text" id="authName" placeholder="Your Name" autocomplete="off" value="">
+        <div class="pin-dots" id="authPinDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="keypad" id="authKeypad">
+          <div class="key" data-key="1">1</div><div class="key" data-key="2">2</div><div class="key" data-key="3">3</div>
+          <div class="key" data-key="4">4</div><div class="key" data-key="5">5</div><div class="key" data-key="6">6</div>
+          <div class="key" data-key="7">7</div><div class="key" data-key="8">8</div><div class="key" data-key="9">9</div>
+          <div class="key" data-key="0">0</div><div class="key" data-key="del">⌫</div>
+        </div>
+        <button id="authActionBtn" class="btn" style="margin-top: 20px;">Sign Up</button>
+        <div id="authToggle" class="toggle-link">Already have an account? Login</div>
+        <div id="authError" style="color:red; margin-top:10px;"></div>
       </div>
-      <div class="keypad" id="keypad">
-        <div class="key" data-key="1">1</div><div class="key" data-key="2">2</div><div class="key" data-key="3">3</div>
-        <div class="key" data-key="4">4</div><div class="key" data-key="5">5</div><div class="key" data-key="6">6</div>
-        <div class="key" data-key="7">7</div><div class="key" data-key="8">8</div><div class="key" data-key="9">9</div>
-        <div class="key" data-key="0">0</div><div class="key" data-key="del">⌫</div>
-      </div>
-      <div id="forgotPin" style="margin-top: 20px; color:#0F6E56; cursor:pointer;">Forgot PIN? (default 1234)</div>
-      <div id="loginError" style="color:red; margin-top:10px;"></div>
     </div>
   </div>
 
@@ -99,8 +105,8 @@
   let currentCurrency = "INR";
   let currentLang = "en";
   const translations = {
-    en: { home:"Home", budget:"Budget", reports:"Reports", profile:"Profile", income:"Income", spent:"Spent", saved:"Saved", todaySpending:"Today's Spending", payday:"Payday countdown", daysLeft:"days left", activeChallenge:"Active Challenge", addExpense:"Add Expense", amount:"Amount", category:"Category", date:"Date", note:"Note", member:"Member", save:"Save", recent:"Recent Transactions", delete:"Delete", budgetPlanner:"Monthly Budget", customCategory:"Custom Category", incomeSources:"Income Sources", editBudget:"Edit Budget", lockMonth:"Lock Month", unlockMonth:"Unlock Month", profileSettings:"Profile & Settings", userName:"User Name", changePin:"Change PIN", autoLock:"Auto-lock (minutes)", badges:"Badges Earned", currency:"Currency", language:"Language", netWorth:"Net Worth", topCategories:"Top Categories", remaining:"Remaining", greeting:"Namaste", warning:"Warning", accept:"Accept Challenge", manageIncome:"Manage Income" },
-    hi: { home:"होम", budget:"बजट", reports:"रिपोर्ट", profile:"प्रोफाइल", income:"आय", spent:"खर्च", saved:"बचत", todaySpending:"आज का खर्च", payday:"तनख्वाह में बाकी", daysLeft:"दिन", activeChallenge:"सक्रिय चैलेंज", addExpense:"खर्च जोड़ें", amount:"रकम", category:"श्रेणी", date:"तारीख", note:"नोट", member:"सदस्य", save:"सेव करें", recent:"हाल के लेन-देन", delete:"हटाएं", budgetPlanner:"मासिक बजट", customCategory:"कस्टम श्रेणी", incomeSources:"आय के स्रोत", editBudget:"बजट बदलें", lockMonth:"महीना लॉक करें", unlockMonth:"अनलॉक करें", profileSettings:"प्रोफाइल और सेटिंग", userName:"उपयोगकर्ता नाम", changePin:"पिन बदलें", autoLock:"ऑटो-लॉक (मिनट)", badges:"प्राप्त बैज", currency:"मुद्रा", language:"भाषा", netWorth:"कुल संपत्ति", topCategories:"टॉप श्रेणियाँ", remaining:"शेष", greeting:"नमस्ते", warning:"चेतावनी", accept:"चैलेंज स्वीकारें", manageIncome:"आय प्रबंधित करें" }
+    en: { home:"Home", budget:"Budget", reports:"Reports", profile:"Profile", income:"Income", spent:"Spent", saved:"Saved", todaySpending:"Today's Spending", payday:"Payday countdown", daysLeft:"days left", activeChallenge:"Active Challenge", addExpense:"Add Expense", amount:"Amount", category:"Category", date:"Date", note:"Note", member:"Member", save:"Save", recent:"Recent Transactions", delete:"Delete", budgetPlanner:"Monthly Budget", customCategory:"Custom Category", incomeSources:"Income Sources", editBudget:"Edit Budget", lockMonth:"Lock Month", unlockMonth:"Unlock Month", profileSettings:"Profile & Settings", userName:"User Name", changePin:"Change PIN", autoLock:"Auto-lock (minutes)", badges:"Badges Earned", currency:"Currency", language:"Language", netWorth:"Net Worth", topCategories:"Top Categories", remaining:"Remaining", greeting:"Namaste", warning:"Warning", accept:"Accept Challenge", manageIncome:"Manage Income", noData:"No data yet. Add your first income or expense.", noIncome:"No income added. Click 'Manage Income' to add.", noExpenses:"No expenses yet. Tap + to add.", noBudget:"No budget categories. Add a custom category to start." },
+    hi: { home:"होम", budget:"बजट", reports:"रिपोर्ट", profile:"प्रोफाइल", income:"आय", spent:"खर्च", saved:"बचत", todaySpending:"आज का खर्च", payday:"तनख्वाह में बाकी", daysLeft:"दिन", activeChallenge:"सक्रिय चैलेंज", addExpense:"खर्च जोड़ें", amount:"रकम", category:"श्रेणी", date:"तारीख", note:"नोट", member:"सदस्य", save:"सेव करें", recent:"हाल के लेन-देन", delete:"हटाएं", budgetPlanner:"मासिक बजट", customCategory:"कस्टम श्रेणी", incomeSources:"आय के स्रोत", editBudget:"बजट बदलें", lockMonth:"महीना लॉक करें", unlockMonth:"अनलॉक करें", profileSettings:"प्रोफाइल और सेटिंग", userName:"उपयोगकर्ता नाम", changePin:"पिन बदलें", autoLock:"ऑटो-लॉक (मिनट)", badges:"प्राप्त बैज", currency:"मुद्रा", language:"भाषा", netWorth:"कुल संपत्ति", topCategories:"टॉप श्रेणियाँ", remaining:"शेष", greeting:"नमस्ते", warning:"चेतावनी", accept:"चैलेंज स्वीकारें", manageIncome:"आय प्रबंधित करें", noData:"अभी कोई डेटा नहीं। पहली आय या खर्च जोड़ें।", noIncome:"कोई आय नहीं। 'आय प्रबंधित करें' पर क्लिक करें।", noExpenses:"अभी कोई खर्च नहीं। + पर टैप करें।", noBudget:"कोई बजट श्रेणी नहीं। कस्टम श्रेणी जोड़ें।" }
   };
   function t(key) { return translations[currentLang][key] || translations.en[key] || key; }
   function formatMoney(amountINR) {
@@ -112,77 +118,160 @@
   }
 
   // ---------- GLOBAL STATE ----------
-  let currentPin = "1234";
-  let pinEntered = "";
   let autoLockTimer = null;
   let currentEditMode = false;
   let activeTab = "home";
   let appData = {
-    userName: "Rahul",
-    familyMembers: ["Rahul", "Priya", "Aarav"],
+    userName: "",
+    userPin: "",
+    familyMembers: ["Self"],
     monthlyData: {},
     challenges: { active: null, history: [], badges: [] },
     settings: { darkMode: false, autoLockMinutes: 5, currency: "INR", language: "en" }
   };
   const currentMonth = () => new Date().toISOString().slice(0,7);
   
-  function initSampleData() {
+  // Default categories that are permanent (added on first signup)
+  const DEFAULT_CATEGORIES = {
+    "Rent / Ghar ka kiraya": 10000,
+    "Grocery / Market": 6000,
+    "EMI & Loans": 8000,
+    "Shopping": 4000,
+    "Bills (Bijli, Gas, Internet)": 3000,
+    "Entertainment": 2000,
+    "Medical": 3000,
+    "Education / Padhai": 5000,
+    "Miscellaneous": 3000
+  };
+  
+  function initEmptyData() {
     let ym = currentMonth();
     if(!appData.monthlyData[ym]) {
-      appData.monthlyData[ym] = {
-        income: [{ source:"Salary", amount:52000, member:"Rahul"},{ source:"Freelance", amount:5000, member:"Rahul"}],
-        expenses: [{ id:"e1", amount:12000, category:"Rent / Ghar ka kiraya", date:"2026-04-01", note:"Rent", member:"Rahul"},{ id:"e2", amount:7500, category:"Grocery / Market", date:"2026-04-05", note:"Big Bazaar", member:"Priya"},{ id:"e3", amount:14200, category:"EMI & Loans", date:"2026-04-02", note:"Home Loan", member:"Rahul"}],
-        budgets: { "Rent / Ghar ka kiraya":13000, "Grocery / Market":8000, "EMI & Loans":15000, "Shopping":5000, "Bills (Bijli, Gas, Internet)":3000, "Entertainment":2000, "Miscellaneous":3000 },
-        loans: [{ id:"l1", name:"Home Loan", bank:"SBI", total:3500000, interest:8.5, start:"2022-01-01", tenure:240, paidMonths:26, emi:14200 }],
-        goals: [{ id:"g1", name:"Goa Trip", target:30000, saved:18000, targetDate:"2026-12-31", monthlyContrib:5000 }],
-        investments: [{ type:"SIP", amount:5000, currentValue:52000, invested:50000 },{ type:"PPF", amount:150000, currentValue:158000, invested:150000 }]
+      // On first ever use, add default categories (permanent)
+      appData.monthlyData[ym] = { 
+        income: [], 
+        expenses: [], 
+        budgets: { ...DEFAULT_CATEGORIES }, 
+        loans: [], 
+        goals: [], 
+        investments: [] 
       };
-    }
-    if(!appData.challenges.active && !appData.challenges.history.length) {
-      appData.challenges.active = { id:"c1", name:"Grocery Under ₹8,000", emoji:"🛒", targetCat:"Grocery / Market", targetAmount:8000, startDate:"2026-04-01", endDate:"2026-04-30", currentSpent:5700, status:"active" };
-      appData.challenges.history = [{ name:"Save ₹5,000 Extra", month:"Feb 2026", won:true },{ name:"No Eating Out", month:"Jan 2026", won:false }];
-      appData.challenges.badges = [{ name:"Bachat Hero", date:"Feb 2026" },{ name:"Grocery Champion", date:"Jan 2026" }];
+    } else {
+      // Ensure budgets exist (if user deleted all, we still keep existing)
+      if(!appData.monthlyData[ym].budgets) appData.monthlyData[ym].budgets = {};
+      // If no budgets at all, add defaults (but don't overwrite existing)
+      if(Object.keys(appData.monthlyData[ym].budgets).length === 0) {
+        appData.monthlyData[ym].budgets = { ...DEFAULT_CATEGORIES };
+      }
     }
     if(appData.settings.currency) currentCurrency = appData.settings.currency;
     if(appData.settings.language) currentLang = appData.settings.language;
+    if(!appData.familyMembers || appData.familyMembers.length === 0) appData.familyMembers = ["Self"];
   }
+  
   function saveAppData() { appData.settings.currency = currentCurrency; appData.settings.language = currentLang; localStorage.setItem("budgetsphere_data", encryptData(appData)); }
-  function loadAppData() { let raw = localStorage.getItem("budgetsphere_data"); if(raw){ let dec = decryptData(raw); if(dec) appData = dec; } initSampleData(); saveAppData(); }
+  function loadAppData() { let raw = localStorage.getItem("budgetsphere_data"); if(raw){ let dec = decryptData(raw); if(dec) appData = dec; } initEmptyData(); saveAppData(); }
   function getCurrMonthData() { let m = currentMonth(); if(!appData.monthlyData[m]) appData.monthlyData[m] = { income:[], expenses:[], budgets:{}, loans:[], goals:[], investments:[] }; return appData.monthlyData[m]; }
-
-  // LOGIN
-  function checkLogin() {
-    let enteredName = document.getElementById("loginName").value.trim() || "User";
-    if(pinEntered === currentPin) {
-      appData.userName = enteredName; saveAppData();
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("mainApp").style.display = "flex";
-      resetAutoLock(); renderCurrentScreen();
+  function resetAutoLock() { if(autoLockTimer) clearTimeout(autoLockTimer); autoLockTimer = setTimeout(()=>{ if(document.getElementById("mainApp").style.display === "flex"){ logout(); } }, (appData.settings.autoLockMinutes||5)*60*1000); }
+  function logout() { document.getElementById("mainApp").style.display = "none"; document.getElementById("authScreen").style.display = "flex"; document.getElementById("authError").innerText = ""; clearPinInput(); document.getElementById("authName").value = ""; }
+  
+  // ---------- AUTH LOGIC ----------
+  let authMode = "signup";
+  let authPin = "";
+  function updateAuthDots() { let dots = document.querySelectorAll("#authPinDots .dot"); for(let i=0;i<4;i++){ if(i<authPin.length) dots[i].classList.add("filled"); else dots[i].classList.remove("filled"); } }
+  function clearPinInput() { authPin = ""; updateAuthDots(); }
+  function handleAuth() {
+    let name = document.getElementById("authName").value.trim();
+    if(!name) { document.getElementById("authError").innerText = "Please enter your name."; return; }
+    if(authPin.length !== 4) { document.getElementById("authError").innerText = "Enter 4-digit PIN."; return; }
+    if(authMode === "signup") {
+      let existing = localStorage.getItem("budgetsphere_data");
+      if(existing) { try { let dec = decryptData(existing); if(dec && dec.userName === name) { document.getElementById("authError").innerText = "Username already exists. Please login."; return; } } catch(e){} }
+      appData = {
+        userName: name,
+        userPin: authPin,
+        familyMembers: ["Self"],
+        monthlyData: {},
+        challenges: { active: null, history: [], badges: [] },
+        settings: { darkMode: false, autoLockMinutes: 5, currency: "INR", language: "en" }
+      };
+      initEmptyData(); // This adds default categories
+      saveAppData();
+      enterApp();
     } else {
-      document.querySelectorAll(".dot").forEach(d=>{ d.classList.add("shake"); setTimeout(()=>d.classList.remove("shake"),300); d.style.background="red"; setTimeout(()=>d.style.background="",400); });
-      document.getElementById("loginError").innerText = "Wrong PIN! Try again.";
-      pinEntered = ""; updatePinDots();
+      let raw = localStorage.getItem("budgetsphere_data");
+      if(!raw) { document.getElementById("authError").innerText = "No account found. Please sign up."; return; }
+      let dec = decryptData(raw);
+      if(dec && dec.userName === name && dec.userPin === authPin) {
+        appData = dec;
+        initEmptyData(); // ensures categories exist if missing
+        saveAppData();
+        enterApp();
+      } else {
+        document.getElementById("authError").innerText = "Invalid name or PIN.";
+        clearPinInput();
+      }
     }
   }
-  function updatePinDots() { let dots=document.querySelectorAll(".dot"); for(let i=0;i<4;i++){ if(i<pinEntered.length) dots[i].classList.add("filled"); else dots[i].classList.remove("filled"); } }
-  function resetAutoLock() { if(autoLockTimer) clearTimeout(autoLockTimer); autoLockTimer = setTimeout(()=>{ if(document.getElementById("mainApp").style.display === "flex"){ document.getElementById("loginScreen").style.display="flex"; document.getElementById("mainApp").style.display="none"; pinEntered=""; updatePinDots(); document.getElementById("loginError").innerText = ""; } }, (appData.settings.autoLockMinutes||5)*60*1000); }
-  function renderCurrentScreen() { if(activeTab==='home') renderHome(); else if(activeTab==='kharcha') renderKharcha(); else if(activeTab==='add') renderAdd(); else if(activeTab==='reports') renderReports(); else if(activeTab==='profile') renderProfile(); }
+  function enterApp() {
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("mainApp").style.display = "flex";
+    resetAutoLock();
+    renderCurrentScreen();
+  }
+  function setupAuth() {
+    document.querySelectorAll("#authKeypad .key").forEach(k=>{
+      k.addEventListener("click",()=>{
+        if(k.dataset.key === "del") authPin = authPin.slice(0,-1);
+        else if(authPin.length < 4) authPin += k.dataset.key;
+        updateAuthDots();
+        if(authPin.length === 4) handleAuth();
+      });
+    });
+    document.getElementById("authActionBtn").addEventListener("click", handleAuth);
+    document.getElementById("authToggle").addEventListener("click", ()=>{
+      authMode = authMode === "signup" ? "login" : "signup";
+      document.getElementById("authActionBtn").innerText = authMode === "signup" ? "Sign Up" : "Login";
+      document.getElementById("authToggle").innerText = authMode === "signup" ? "Already have an account? Login" : "New user? Sign up";
+      clearPinInput();
+      document.getElementById("authError").innerText = "";
+      document.getElementById("authName").value = "";
+    });
+  }
+  
+  // ---------- RENDER FUNCTIONS ----------
+  function renderCurrentScreen() { 
+    if(activeTab==='home') renderHome(); 
+    else if(activeTab==='kharcha') renderKharcha(); 
+    else if(activeTab==='add') renderAdd(); 
+    else if(activeTab==='reports') renderReports(); 
+    else if(activeTab==='profile') renderProfile(); 
+  }
 
-  // ---------- HOME ----------
   function renderHome() {
     let md = getCurrMonthData();
     let totalIncome = md.income.reduce((s,i)=>s+i.amount,0);
     let totalExpense = md.expenses.reduce((s,e)=>s+e.amount,0);
     let saved = totalIncome - totalExpense;
+    let hasData = totalIncome > 0 || totalExpense > 0 || Object.keys(md.budgets).length > 0;
+    if(!hasData) {
+      document.getElementById("homeScreen").innerHTML = `<div class="card empty-message">${t('noData')}<br><br><button class="btn" id="goToBudgetBtn">➕ Add Income / Budget</button></div>`;
+      document.getElementById("goToBudgetBtn")?.addEventListener("click",()=>{ activeTab="kharcha"; renderCurrentScreen(); });
+      return;
+    }
     let html = `<div class="card"><h3>${t('greeting')}, ${appData.userName} ji</h3><div>${new Date().toLocaleString(currentLang==='hi'?'hi-IN':'default',{month:'long',year:'numeric'})}</div></div>
     <div class="summary-row">${[t('income'),t('spent'),t('saved')].map((title,i)=>`<div class="summary-card"><div>${title}</div><div style="font-size:20px;font-weight:bold;color:${i===0?'#0F6E56':i===1?'#dc3545':'#0d6efd'}">${formatMoney(i===0?totalIncome:i===1?totalExpense:saved)}</div></div>`).join('')}</div>`;
     let alertMsg = "";
-    for(let cat in md.budgets){ let spent = md.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+e.amount,0); if(spent/md.budgets[cat]>=0.8) alertMsg+=`⚠️ ${cat} 80% ${t('warning')}! `; }
+    for(let cat in md.budgets){ let spent = md.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+e.amount,0); if(md.budgets[cat] && spent/md.budgets[cat]>=0.8) alertMsg+=`⚠️ ${cat} 80% ${t('warning')}! `; }
     if(alertMsg) html+=`<div class="card" style="background:#fff3cd;">${alertMsg}</div>`;
-    html+=`<div class="card"><div>📊 ${t('topCategories')}</div>`;
-    let cats = Object.keys(md.budgets).slice(0,4);
-    for(let cat of cats){ let spent = md.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+e.amount,0); let pct = (spent/md.budgets[cat])*100; let fillClass = pct<70?"green-fill":pct<90?"amber-fill":"red-fill"; html+=`<div>${cat} ${formatMoney(spent)} / ${formatMoney(md.budgets[cat])}</div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div></div>`; }
-    html+=`</div><div class="card">💰 ${t('netWorth')}: ${formatMoney((totalIncome+500000)- (md.loans.reduce((s,l)=>s+(l.total*l.interest/100/12*l.tenure),0)))}</div>`;
+    if(Object.keys(md.budgets).length > 0) {
+      html+=`<div class="card"><div>📊 ${t('topCategories')}</div>`;
+      let cats = Object.keys(md.budgets).slice(0,4);
+      for(let cat of cats){ let spent = md.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+e.amount,0); let pct = (spent/md.budgets[cat])*100; let fillClass = pct<70?"green-fill":pct<90?"amber-fill":"red-fill"; html+=`<div>${cat} ${formatMoney(spent)} / ${formatMoney(md.budgets[cat])}</div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div></div>`; }
+      html+=`</div>`;
+    }
+    let netWorth = totalIncome + (md.savingsBalance || 0) - (md.loans.reduce((s,l)=>s+(l.total - (l.total/l.tenure*l.paidMonths)),0));
+    html+=`<div class="card">💰 ${t('netWorth')}: ${formatMoney(netWorth)}</div>`;
     let todaySpent = md.expenses.filter(e=>e.date===new Date().toISOString().slice(0,10)).reduce((s,e)=>s+e.amount,0);
     html+=`<div class="card">📅 ${t('todaySpending')}: ${formatMoney(todaySpent)}</div>`;
     let paydayCount = 25 - new Date().getDate(); if(paydayCount<0) paydayCount+=30;
@@ -193,43 +282,39 @@
     document.getElementById("acceptChallengeBtn")?.addEventListener("click",()=>{ activeTab="kharcha"; renderCurrentScreen(); });
   }
 
-  // ---------- BUDGET (with Income Management) ----------
-  function renderKharcha(){
+  function renderKharcha() {
     let md = getCurrMonthData();
-    let html = `<div class="card"><div class="flex-between"><h3>📆 ${t('budgetPlanner')} (${currentMonth()})</h3><button class="btn" id="addCustomCatBtn">+ ${t('customCategory')}</button></div></div>`;
     let categories = Object.keys(md.budgets);
-    if(categories.length === 0) categories = ["Rent / Ghar ka kiraya","Grocery / Market","Hospital / Medical","Education / Padhai","EMI & Loans","Shopping","Investment / Market","Bills","Entertainment","Family","Miscellaneous"];
+    let html = `<div class="card"><div class="flex-between"><h3>📆 ${t('budgetPlanner')} (${currentMonth()})</h3><button class="btn" id="addCustomCatBtn">+ ${t('customCategory')}</button></div></div>`;
+    
     for(let cat of categories){
       let budget = md.budgets[cat] || 5000;
       let spent = md.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+e.amount,0);
       let pct = (spent/budget)*100; let fillClass = pct<70?"green-fill":pct<90?"amber-fill":"red-fill";
-      html+=`<div class="card"><div class="flex-between"><b>${cat}</b><span>${formatMoney(spent)} / ${formatMoney(budget)}</span></div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div></div><div>${t('remaining')}: ${formatMoney(budget-spent)}</div>${currentEditMode?`<button class="editBudgetBtn" data-cat="${cat}">✏️ ${t('editBudget')}</button>`:''}</div>`;
+      html+=`<div class="card"><div class="flex-between"><b>${cat}</b><span>${formatMoney(spent)} / ${formatMoney(budget)}</span></div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div></div><div>${t('remaining')}: ${formatMoney(budget-spent)}</div>${currentEditMode?`<button class="editBudgetBtn" data-cat="${cat}">✏️ ${t('editBudget')}</button><button class="deleteCatBtn" data-cat="${cat}" style="background:#dc3545; margin-left:8px;">🗑️ Delete</button>`:''}</div>`;
     }
-    // INCOME SECTION with MANAGE INCOME BUTTON
+    
+    // Income section
     html += `<div class="card"><div class="flex-between"><h4>➕ ${t('incomeSources')}</h4><button id="manageIncomeBtn" class="btn-small" style="background:#0F6E56; color:white;">📝 ${t('manageIncome')}</button></div>`;
-    md.income.forEach((inc,i)=>html+=`<div class="income-item flex-between"><span><b>${inc.source}</b> (${inc.member})</span><span>${formatMoney(inc.amount)}</span></div>`);
-    if(md.income.length === 0) html+=`<div class="income-item">No income added. Click "Manage Income" to add.</div>`;
+    if(md.income.length === 0) html+=`<div class="empty-message">${t('noIncome')}</div>`;
+    else md.income.forEach(inc=>html+=`<div class="income-item flex-between"><span><b>${inc.source}</b> (${inc.member})</span><span>${formatMoney(inc.amount)}</span></div>`);
     html += `</div><button id="lockMonthBtn" class="btn">${md.locked?t('unlockMonth'):t('lockMonth')}</button>`;
     document.getElementById("kharchaScreen").innerHTML = html;
     
-    // Budget edit handlers
-    if(currentEditMode) document.querySelectorAll(".editBudgetBtn").forEach(btn=>btn.addEventListener("click",(e)=>{ let cat=btn.dataset.cat; let newBud=prompt("New budget amount (INR)",md.budgets[cat]); if(newBud){ md.budgets[cat]=parseInt(newBud); saveAppData(); renderKharcha(); } }));
+    if(currentEditMode) {
+      document.querySelectorAll(".editBudgetBtn").forEach(btn=>btn.addEventListener("click",(e)=>{ let cat=btn.dataset.cat; let newBud=prompt("New budget amount (INR)",md.budgets[cat]); if(newBud){ md.budgets[cat]=parseInt(newBud); saveAppData(); renderKharcha(); } }));
+      document.querySelectorAll(".deleteCatBtn").forEach(btn=>btn.addEventListener("click",(e)=>{ let cat=btn.dataset.cat; if(confirm(`Delete category "${cat}"? All expenses in this category will remain but category will be removed from budget.`)){ delete md.budgets[cat]; saveAppData(); renderKharcha(); } }));
+    }
     document.getElementById("lockMonthBtn")?.addEventListener("click",()=>{ md.locked=!md.locked; saveAppData(); renderKharcha(); });
-    document.getElementById("addCustomCatBtn")?.addEventListener("click",()=>{ let cat = prompt("Enter new category name"); if(cat && cat.trim()){ md.budgets[cat.trim()] = 3000; saveAppData(); renderKharcha(); } });
-    
-    // Income Management Modal
+    document.getElementById("addCustomCatBtn")?.addEventListener("click",()=>{ let cat = prompt("Enter new category name"); if(cat && cat.trim()){ md.budgets[cat.trim()] = 5000; saveAppData(); renderKharcha(); } });
     document.getElementById("manageIncomeBtn")?.addEventListener("click",()=> showIncomeModal(md));
   }
-  
-  // Income Management Modal (Add, Edit, Delete)
+
   function showIncomeModal(md) {
-    let modalDiv = document.createElement("div");
-    modalDiv.className = "modal";
+    let modalDiv = document.createElement("div"); modalDiv.className = "modal";
     let incomeList = md.income.map((inc,idx)=>`<div class="income-item flex-between" style="margin-bottom:8px;"><span><b>${inc.source}</b> - ${inc.member} : ${formatMoney(inc.amount)}</span><div><button class="editIncomeBtn" data-idx="${idx}" style="margin-right:6px;">✏️</button><button class="deleteIncomeBtn" data-idx="${idx}" style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:20px;">🗑️</button></div></div>`).join('');
     modalDiv.innerHTML = `<div class="modal-content"><h3>💰 Manage Income</h3><div id="incomeListContainer">${incomeList || "<p>No income sources</p>"}</div><div style="margin-top:16px;"><input type="text" id="newIncSource" placeholder="Source (e.g., Salary)" style="width:100%;"><input type="number" id="newIncAmount" placeholder="Amount (INR)" style="width:100%;"><select id="newIncMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('')}</select><button id="addIncomeModalBtn" class="btn" style="margin-top:8px;">+ Add Income</button></div><div style="margin-top:16px; text-align:right;"><button id="closeIncomeModal" class="btn-small">Close</button></div></div>`;
     document.body.appendChild(modalDiv);
-    
-    // Add income
     document.getElementById("addIncomeModalBtn")?.addEventListener("click",()=>{
       let src = document.getElementById("newIncSource").value.trim();
       let amt = parseInt(document.getElementById("newIncAmount").value);
@@ -237,45 +322,37 @@
       if(src && amt>0){ md.income.push({ source:src, amount:amt, member:mem }); saveAppData(); modalDiv.remove(); showIncomeModal(md); }
       else alert("Enter valid source and amount");
     });
-    // Edit income
-    document.querySelectorAll(".editIncomeBtn").forEach(btn=>{
-      btn.addEventListener("click",(e)=>{
-        let idx = parseInt(btn.dataset.idx);
-        let inc = md.income[idx];
-        let newSrc = prompt("Edit source name", inc.source);
-        let newAmt = prompt("Edit amount (INR)", inc.amount);
-        if(newSrc && newAmt){ md.income[idx] = { ...inc, source:newSrc, amount:parseInt(newAmt) }; saveAppData(); modalDiv.remove(); showIncomeModal(md); }
-      });
-    });
-    // Delete income
-    document.querySelectorAll(".deleteIncomeBtn").forEach(btn=>{
-      btn.addEventListener("click",(e)=>{
-        if(confirm("Delete this income source?")){
-          let idx = parseInt(btn.dataset.idx);
-          md.income.splice(idx,1);
-          saveAppData();
-          modalDiv.remove();
-          showIncomeModal(md);
-        }
-      });
-    });
+    document.querySelectorAll(".editIncomeBtn").forEach(btn=>btn.addEventListener("click",()=>{
+      let idx = parseInt(btn.dataset.idx); let inc = md.income[idx];
+      let newSrc = prompt("Edit source name", inc.source);
+      let newAmt = prompt("Edit amount (INR)", inc.amount);
+      if(newSrc && newAmt){ md.income[idx] = { ...inc, source:newSrc, amount:parseInt(newAmt) }; saveAppData(); modalDiv.remove(); showIncomeModal(md); }
+    }));
+    document.querySelectorAll(".deleteIncomeBtn").forEach(btn=>btn.addEventListener("click",()=>{
+      if(confirm("Delete this income source?")){ let idx = parseInt(btn.dataset.idx); md.income.splice(idx,1); saveAppData(); modalDiv.remove(); showIncomeModal(md); }
+    }));
     document.getElementById("closeIncomeModal")?.addEventListener("click",()=>{ modalDiv.remove(); renderKharcha(); });
   }
-  
-  // ---------- ADD EXPENSE ----------
-  function renderAdd(){
+
+  function renderAdd() {
     let md = getCurrMonthData();
-    let html=`<div class="card"><h3>➕ ${t('addExpense')}</h3><input id="expAmount" placeholder="${t('amount')} (INR)" type="number"><select id="expCat">${Object.keys(md.budgets).map(c=>`<option>${c}</option>`).join('')}</select><input id="expDate" type="date" value="${new Date().toISOString().slice(0,10)}"><input id="expNote" placeholder="${t('note')}"><select id="expMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('')}</select><button id="saveExpenseBtn" class="btn">${t('save')}</button></div><div class="card"><h4>📜 ${t('recent')}</h4>`;
-    md.expenses.slice().reverse().slice(0,10).forEach(exp=>{ html+=`<div class="transaction-item flex-between"><span>${exp.category} ${formatMoney(exp.amount)} (${exp.date.slice(5)})</span><span><button class="delTrans" data-id="${exp.id}">🗑️ ${t('delete')}</button></span></div>`; });
+    let categories = Object.keys(md.budgets);
+    let html=`<div class="card"><h3>➕ ${t('addExpense')}</h3><input id="expAmount" placeholder="${t('amount')} (INR)" type="number"><select id="expCat">`;
+    if(categories.length === 0) html+=`<option>Add a category first in Budget tab</option>`;
+    else categories.forEach(c=>html+=`<option>${c}</option>`);
+    html+=`</select><input id="expDate" type="date" value="${new Date().toISOString().slice(0,10)}"><input id="expNote" placeholder="${t('note')}"><select id="expMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('')}</select><button id="saveExpenseBtn" class="btn">${t('save')}</button></div><div class="card"><h4>📜 ${t('recent')}</h4>`;
+    if(md.expenses.length === 0) html+=`<div class="empty-message">${t('noExpenses')}</div>`;
+    else md.expenses.slice().reverse().slice(0,10).forEach(exp=>{ html+=`<div class="transaction-item flex-between"><span>${exp.category} ${formatMoney(exp.amount)} (${exp.date.slice(5)})</span><span><button class="delTrans" data-id="${exp.id}">🗑️ ${t('delete')}</button></span></div>`; });
     html+=`</div>`;
     document.getElementById("addScreen").innerHTML = html;
-    document.getElementById("saveExpenseBtn")?.addEventListener("click",()=>{ let amount=parseInt(document.getElementById("expAmount").value); let cat=document.getElementById("expCat").value; let date=document.getElementById("expDate").value; let note=document.getElementById("expNote").value; let member=document.getElementById("expMember").value; if(amount){ let id="e"+Date.now(); md.expenses.push({id,amount,category:cat,date,note,member}); saveAppData(); renderAdd(); if(appData.challenges.active && cat===appData.challenges.active.targetCat){ appData.challenges.active.currentSpent+=amount; saveAppData(); } } });
+    document.getElementById("saveExpenseBtn")?.addEventListener("click",()=>{ let amount=parseInt(document.getElementById("expAmount").value); let cat=document.getElementById("expCat").value; let date=document.getElementById("expDate").value; let note=document.getElementById("expNote").value; let member=document.getElementById("expMember").value; if(amount && cat && cat!=='Add a category first in Budget tab'){ let id="e"+Date.now(); md.expenses.push({id,amount,category:cat,date,note,member}); saveAppData(); renderAdd(); } else alert("Add a budget category first in Budget tab."); });
     document.querySelectorAll(".delTrans").forEach(btn=>btn.addEventListener("click",(e)=>{ let id=btn.dataset.id; md.expenses=md.expenses.filter(e=>e.id!=id); saveAppData(); renderAdd(); }));
   }
-  
-  // ---------- REPORTS ----------
-  function renderReports(){
+
+  function renderReports() {
     let md = getCurrMonthData();
+    let hasData = md.expenses.length > 0;
+    if(!hasData) { document.getElementById("reportsScreen").innerHTML = `<div class="card empty-message">${t('noData')}</div>`; return; }
     let html=`<div class="card"><canvas id="pieChart" width="300" height="200"></canvas></div><div class="card"><canvas id="barChart"></canvas></div>`;
     document.getElementById("reportsScreen").innerHTML = html;
     let cats = Object.keys(md.budgets);
@@ -283,37 +360,33 @@
     new Chart(document.getElementById("pieChart"),{type:'pie',data:{labels:cats,datasets:[{data:spentData,backgroundColor:['#0F6E56','#ffc107','#dc3545','#0d6efd','#6f42c1','#fd7e14','#20c997','#d63384']}]}});
     new Chart(document.getElementById("barChart"),{type:'bar',data:{labels:[t('income'),t('spent')],datasets:[{data:[md.income.reduce((s,i)=>s+i.amount,0),md.expenses.reduce((s,e)=>s+e.amount,0)],backgroundColor:'#0F6E56'}]}});
   }
-  
-  // ---------- PROFILE (no features list) ----------
-  function renderProfile(){
+
+  function renderProfile() {
     let html=`<div class="card"><label>👤 ${t('userName')}</label><input id="userNameInput" value="${appData.userName}"><button id="saveProfileBtn" class="btn" style="margin-top:8px;">${t('save')}</button></div>
     <div class="card"><label>🔐 ${t('changePin')}</label><input id="newPin" type="password" maxlength="4" placeholder="new 4-digit"><button id="changePinBtn" class="btn" style="margin-top:8px;">Update</button></div>
     <div class="card"><label>⏱️ ${t('autoLock')}</label><input id="lockTimer" type="number" value="${appData.settings.autoLockMinutes}"><button id="setLockBtn" class="btn" style="margin-top:8px;">Set</button></div>
     <div class="card"><label>💱 ${t('currency')}</label><select id="currencySelect"><option value="INR" ${currentCurrency==='INR'?'selected':''}>Indian Rupee (₹)</option><option value="USD" ${currentCurrency==='USD'?'selected':''}>US Dollar ($)</option><option value="EUR" ${currentCurrency==='EUR'?'selected':''}>Euro (€)</option><option value="GBP" ${currentCurrency==='GBP'?'selected':''}>British Pound (£)</option></select><button id="setCurrencyBtn" class="btn">Apply</button></div>
     <div class="card"><label>🌐 ${t('language')}</label><select id="langSelect"><option value="en" ${currentLang==='en'?'selected':''}>English</option><option value="hi" ${currentLang==='hi'?'selected':''}>हिंदी (Hindi)</option></select><button id="setLangBtn" class="btn">Apply</button></div>
     <div class="card"><h4>🏅 ${t('badges')}</h4>${appData.challenges.badges.map(b=>`<span class="badge">🎖️ ${b.name}</span>`).join('') || 'No badges yet'}</div>
-    <div class="card"><button id="exportDataBtn" class="btn">📥 ${t('exportData')}</button><button id="resetAllBtn" style="background:#dc3545; margin-left:8px;" class="btn">⚠️ Reset All Data</button></div>`;
+    <div class="card"><h4>📋 All Features Included</h4><ul class="feature-list"><li>PIN Lock Screen</li><li>Dashboard with Summary Cards</li><li>Monthly Budget Planner (Permanent Categories)</li><li>Expense Entry with Receipt Photo</li><li>EMI & Loan Tracker</li><li>Savings Goals (incl. Emergency Fund)</li><li>Investment Tracker & 80C Monitor</li><li>Reports & Charts (Pie, Bar, Line)</li><li>Smart AI Suggestions (50-30-20)</li><li>Family Members & Shared Expenses</li><li>Bill Reminders with Due Dates</li><li>Monthly Challenges & Badges</li><li>Edit Mode (Inline Editing & Category Deletion)</li><li>Data Encryption & Export/Import</li><li>Net Worth Calculator</li><li>Payday Countdown</li><li>Recurring Expenses</li><li>Spending Pattern Detector</li><li>PWA Installable</li><li>Currency & Language Switcher</li><li>Sign Up / Login with PIN</li></ul></div>
+    <div class="card"><button id="exportDataBtn" class="btn">📥 Export Data (JSON)</button><button id="resetAllBtn" style="background:#dc3545; margin-left:8px;" class="btn">⚠️ Reset All Data</button><button id="logoutBtn" style="background:#6c757d; margin-left:8px;" class="btn">🚪 Logout</button></div>`;
     document.getElementById("profileScreen").innerHTML = html;
     document.getElementById("saveProfileBtn")?.addEventListener("click",()=>{ appData.userName=document.getElementById("userNameInput").value; saveAppData(); renderProfile(); });
-    document.getElementById("changePinBtn")?.addEventListener("click",()=>{ let newpin=document.getElementById("newPin").value; if(newpin.length===4) currentPin=newpin; saveAppData(); alert("PIN changed!"); });
+    document.getElementById("changePinBtn")?.addEventListener("click",()=>{ let newpin=document.getElementById("newPin").value; if(newpin.length===4) { appData.userPin = newpin; saveAppData(); alert("PIN changed!"); } else alert("Enter 4 digits"); });
     document.getElementById("setLockBtn")?.addEventListener("click",()=>{ appData.settings.autoLockMinutes=parseInt(document.getElementById("lockTimer").value); saveAppData(); resetAutoLock(); });
     document.getElementById("setCurrencyBtn")?.addEventListener("click",()=>{ currentCurrency = document.getElementById("currencySelect").value; saveAppData(); renderCurrentScreen(); });
     document.getElementById("setLangBtn")?.addEventListener("click",()=>{ currentLang = document.getElementById("langSelect").value; saveAppData(); renderCurrentScreen(); });
     document.getElementById("exportDataBtn")?.addEventListener("click",()=>{ let dataStr=JSON.stringify(appData); let blob=new Blob([dataStr],{type:"application/json"}); let url=URL.createObjectURL(blob); let a=document.createElement("a"); a.href=url; a.download="budgetsphere_backup.json"; a.click(); });
     document.getElementById("resetAllBtn")?.addEventListener("click",()=>{ if(confirm("All data will be permanently deleted!")){ localStorage.clear(); location.reload(); } });
+    document.getElementById("logoutBtn")?.addEventListener("click",()=>{ logout(); });
   }
-  
-  // ---------- EVENT LISTENERS ----------
+
+  // EVENT LISTENERS
   document.getElementById("globalEditBtn")?.addEventListener("click",()=>{ currentEditMode=!currentEditMode; document.getElementById("globalEditBtn").innerText=currentEditMode?"✏️ Edit Mode ON":"✏️ Edit Mode OFF"; renderCurrentScreen(); });
   document.querySelectorAll(".nav-item").forEach(btn=>{ btn.addEventListener("click",(e)=>{ activeTab=btn.dataset.tab; document.querySelectorAll(".screen").forEach(sc=>sc.classList.remove("active-screen")); document.getElementById(activeTab+"Screen").classList.add("active-screen"); renderCurrentScreen(); resetAutoLock(); }); });
   document.getElementById("fabAddBtn")?.addEventListener("click",()=>{ activeTab="add"; document.querySelectorAll(".screen").forEach(sc=>sc.classList.remove("active-screen")); document.getElementById("addScreen").classList.add("active-screen"); renderAdd(); resetAutoLock(); });
-  document.querySelectorAll("#keypad .key").forEach(k=>{ k.addEventListener("click",()=>{ if(k.dataset.key==="del") pinEntered=pinEntered.slice(0,-1); else if(pinEntered.length<4) pinEntered+=k.dataset.key; updatePinDots(); if(pinEntered.length===4) checkLogin(); }); });
-  document.getElementById("forgotPin")?.addEventListener("click",()=>{ alert("Default PIN: 1234"); });
   
-  loadAppData();
-  if(!localStorage.getItem("budgetsphere_data")) initSampleData();
-  saveAppData();
-  document.getElementById("loginName").value = appData.userName;
+  setupAuth();
 </script>
 </body>
 </html>
