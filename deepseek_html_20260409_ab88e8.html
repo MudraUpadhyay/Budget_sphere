@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>BudgetSphere - Ghar Ka Hisaab | Permanent Categories</title>
+  <title>BudgetSphere - Ghar Ka Hisaab</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
   <style>
@@ -43,10 +43,8 @@
     .modal-content { background: white; border-radius: 28px; padding: 24px; width: 90%; max-width: 320px; }
     .empty-message { text-align: center; color: #6c757d; padding: 20px; font-style: italic; }
     .toggle-link { color: #0F6E56; cursor: pointer; margin-top: 10px; font-size: 14px; }
-    .feature-list { columns: 2; column-gap: 16px; font-size: 13px; margin-top: 12px; }
-    .feature-list li { margin-bottom: 8px; list-style: none; padding-left: 20px; position: relative; }
-    .feature-list li::before { content: "✅"; position: absolute; left: 0; }
-    @media (max-width: 480px) { .feature-list { columns: 1; } }
+    .family-item { background: #f8f9fa; margin-bottom: 8px; padding: 10px; border-radius: 16px; }
+    @media (max-width: 480px) { .summary-row { gap: 8px; } }
   </style>
 </head>
 <body>
@@ -105,8 +103,8 @@
   let currentCurrency = "INR";
   let currentLang = "en";
   const translations = {
-    en: { home:"Home", budget:"Budget", reports:"Reports", profile:"Profile", income:"Income", spent:"Spent", saved:"Saved", todaySpending:"Today's Spending", payday:"Payday countdown", daysLeft:"days left", activeChallenge:"Active Challenge", addExpense:"Add Expense", amount:"Amount", category:"Category", date:"Date", note:"Note", member:"Member", save:"Save", recent:"Recent Transactions", delete:"Delete", budgetPlanner:"Monthly Budget", customCategory:"Custom Category", incomeSources:"Income Sources", editBudget:"Edit Budget", lockMonth:"Lock Month", unlockMonth:"Unlock Month", profileSettings:"Profile & Settings", userName:"User Name", changePin:"Change PIN", autoLock:"Auto-lock (minutes)", badges:"Badges Earned", currency:"Currency", language:"Language", netWorth:"Net Worth", topCategories:"Top Categories", remaining:"Remaining", greeting:"Namaste", warning:"Warning", accept:"Accept Challenge", manageIncome:"Manage Income", noData:"No data yet. Add your first income or expense.", noIncome:"No income added. Click 'Manage Income' to add.", noExpenses:"No expenses yet. Tap + to add.", noBudget:"No budget categories. Add a custom category to start." },
-    hi: { home:"होम", budget:"बजट", reports:"रिपोर्ट", profile:"प्रोफाइल", income:"आय", spent:"खर्च", saved:"बचत", todaySpending:"आज का खर्च", payday:"तनख्वाह में बाकी", daysLeft:"दिन", activeChallenge:"सक्रिय चैलेंज", addExpense:"खर्च जोड़ें", amount:"रकम", category:"श्रेणी", date:"तारीख", note:"नोट", member:"सदस्य", save:"सेव करें", recent:"हाल के लेन-देन", delete:"हटाएं", budgetPlanner:"मासिक बजट", customCategory:"कस्टम श्रेणी", incomeSources:"आय के स्रोत", editBudget:"बजट बदलें", lockMonth:"महीना लॉक करें", unlockMonth:"अनलॉक करें", profileSettings:"प्रोफाइल और सेटिंग", userName:"उपयोगकर्ता नाम", changePin:"पिन बदलें", autoLock:"ऑटो-लॉक (मिनट)", badges:"प्राप्त बैज", currency:"मुद्रा", language:"भाषा", netWorth:"कुल संपत्ति", topCategories:"टॉप श्रेणियाँ", remaining:"शेष", greeting:"नमस्ते", warning:"चेतावनी", accept:"चैलेंज स्वीकारें", manageIncome:"आय प्रबंधित करें", noData:"अभी कोई डेटा नहीं। पहली आय या खर्च जोड़ें।", noIncome:"कोई आय नहीं। 'आय प्रबंधित करें' पर क्लिक करें।", noExpenses:"अभी कोई खर्च नहीं। + पर टैप करें।", noBudget:"कोई बजट श्रेणी नहीं। कस्टम श्रेणी जोड़ें।" }
+    en: { home:"Home", budget:"Budget", reports:"Reports", profile:"Profile", income:"Income", spent:"Spent", saved:"Saved", todaySpending:"Today's Spending", addExpense:"Add Expense", amount:"Amount", category:"Category", date:"Date", note:"Note", member:"Member", save:"Save", recent:"Recent Transactions", delete:"Delete", budgetPlanner:"Monthly Budget", customCategory:"Custom Category", incomeSources:"Income Sources", editBudget:"Edit Budget", lockMonth:"Lock Month", unlockMonth:"Unlock Month", profileSettings:"Profile & Settings", userName:"User Name", changePin:"Change PIN", autoLock:"Auto-lock (minutes)", badges:"Badges Earned", currency:"Currency", language:"Language", netWorth:"Net Worth", topCategories:"Top Categories", remaining:"Remaining", greeting:"Namaste", warning:"Warning", manageIncome:"Manage Income", noData:"No data yet. Add your first income or expense.", noIncome:"No income added. Click 'Manage Income' to add.", noExpenses:"No expenses yet. Tap + to add.", noBudget:"No budget categories. Add a custom category to start.", familyMembers:"Family Members", addMember:"Add Member" },
+    hi: { home:"होम", budget:"बजट", reports:"रिपोर्ट", profile:"प्रोफाइल", income:"आय", spent:"खर्च", saved:"बचत", todaySpending:"आज का खर्च", addExpense:"खर्च जोड़ें", amount:"रकम", category:"श्रेणी", date:"तारीख", note:"नोट", member:"सदस्य", save:"सेव करें", recent:"हाल के लेन-देन", delete:"हटाएं", budgetPlanner:"मासिक बजट", customCategory:"कस्टम श्रेणी", incomeSources:"आय के स्रोत", editBudget:"बजट बदलें", lockMonth:"महीना लॉक करें", unlockMonth:"अनलॉक करें", profileSettings:"प्रोफाइल और सेटिंग", userName:"उपयोगकर्ता नाम", changePin:"पिन बदलें", autoLock:"ऑटो-लॉक (मिनट)", badges:"प्राप्त बैज", currency:"मुद्रा", language:"भाषा", netWorth:"कुल संपत्ति", topCategories:"टॉप श्रेणियाँ", remaining:"शेष", greeting:"नमस्ते", warning:"चेतावनी", manageIncome:"आय प्रबंधित करें", noData:"अभी कोई डेटा नहीं। पहली आय या खर्च जोड़ें।", noIncome:"कोई आय नहीं। 'आय प्रबंधित करें' पर क्लिक करें।", noExpenses:"अभी कोई खर्च नहीं। + पर टैप करें।", noBudget:"कोई बजट श्रेणी नहीं। कस्टम श्रेणी जोड़ें।", familyMembers:"परिवार के सदस्य", addMember:"सदस्य जोड़ें" }
   };
   function t(key) { return translations[currentLang][key] || translations.en[key] || key; }
   function formatMoney(amountINR) {
@@ -124,14 +122,14 @@
   let appData = {
     userName: "",
     userPin: "",
-    familyMembers: ["Self"],
+    familyMembers: [],
     monthlyData: {},
     challenges: { active: null, history: [], badges: [] },
     settings: { darkMode: false, autoLockMinutes: 5, currency: "INR", language: "en" }
   };
   const currentMonth = () => new Date().toISOString().slice(0,7);
   
-  // Default categories that are permanent (added on first signup)
+  // Default categories (permanent)
   const DEFAULT_CATEGORIES = {
     "Rent / Ghar ka kiraya": 10000,
     "Grocery / Market": 6000,
@@ -147,7 +145,6 @@
   function initEmptyData() {
     let ym = currentMonth();
     if(!appData.monthlyData[ym]) {
-      // On first ever use, add default categories (permanent)
       appData.monthlyData[ym] = { 
         income: [], 
         expenses: [], 
@@ -157,16 +154,14 @@
         investments: [] 
       };
     } else {
-      // Ensure budgets exist (if user deleted all, we still keep existing)
       if(!appData.monthlyData[ym].budgets) appData.monthlyData[ym].budgets = {};
-      // If no budgets at all, add defaults (but don't overwrite existing)
       if(Object.keys(appData.monthlyData[ym].budgets).length === 0) {
         appData.monthlyData[ym].budgets = { ...DEFAULT_CATEGORIES };
       }
     }
     if(appData.settings.currency) currentCurrency = appData.settings.currency;
     if(appData.settings.language) currentLang = appData.settings.language;
-    if(!appData.familyMembers || appData.familyMembers.length === 0) appData.familyMembers = ["Self"];
+    if(!appData.familyMembers) appData.familyMembers = [];
   }
   
   function saveAppData() { appData.settings.currency = currentCurrency; appData.settings.language = currentLang; localStorage.setItem("budgetsphere_data", encryptData(appData)); }
@@ -190,12 +185,12 @@
       appData = {
         userName: name,
         userPin: authPin,
-        familyMembers: ["Self"],
+        familyMembers: [],
         monthlyData: {},
         challenges: { active: null, history: [], badges: [] },
         settings: { darkMode: false, autoLockMinutes: 5, currency: "INR", language: "en" }
       };
-      initEmptyData(); // This adds default categories
+      initEmptyData();
       saveAppData();
       enterApp();
     } else {
@@ -204,7 +199,7 @@
       let dec = decryptData(raw);
       if(dec && dec.userName === name && dec.userPin === authPin) {
         appData = dec;
-        initEmptyData(); // ensures categories exist if missing
+        initEmptyData();
         saveAppData();
         enterApp();
       } else {
@@ -274,12 +269,8 @@
     html+=`<div class="card">💰 ${t('netWorth')}: ${formatMoney(netWorth)}</div>`;
     let todaySpent = md.expenses.filter(e=>e.date===new Date().toISOString().slice(0,10)).reduce((s,e)=>s+e.amount,0);
     html+=`<div class="card">📅 ${t('todaySpending')}: ${formatMoney(todaySpent)}</div>`;
-    let paydayCount = 25 - new Date().getDate(); if(paydayCount<0) paydayCount+=30;
-    html+=`<div class="card">💸 ${t('payday')}: ${paydayCount} ${t('daysLeft')}</div>`;
-    if(appData.challenges.active) html+=`<div class="card">🏆 ${t('activeChallenge')}: ${appData.challenges.active.emoji} ${appData.challenges.active.name} — Progress: ${formatMoney(appData.challenges.active.currentSpent)} / ${formatMoney(appData.challenges.active.targetAmount)}</div>`;
-    else html+=`<div class="card"><button class="btn" id="acceptChallengeBtn">${t('accept')} ➕</button></div>`;
+    // Payday option removed
     document.getElementById("homeScreen").innerHTML = html;
-    document.getElementById("acceptChallengeBtn")?.addEventListener("click",()=>{ activeTab="kharcha"; renderCurrentScreen(); });
   }
 
   function renderKharcha() {
@@ -294,7 +285,6 @@
       html+=`<div class="card"><div class="flex-between"><b>${cat}</b><span>${formatMoney(spent)} / ${formatMoney(budget)}</span></div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div></div><div>${t('remaining')}: ${formatMoney(budget-spent)}</div>${currentEditMode?`<button class="editBudgetBtn" data-cat="${cat}">✏️ ${t('editBudget')}</button><button class="deleteCatBtn" data-cat="${cat}" style="background:#dc3545; margin-left:8px;">🗑️ Delete</button>`:''}</div>`;
     }
     
-    // Income section
     html += `<div class="card"><div class="flex-between"><h4>➕ ${t('incomeSources')}</h4><button id="manageIncomeBtn" class="btn-small" style="background:#0F6E56; color:white;">📝 ${t('manageIncome')}</button></div>`;
     if(md.income.length === 0) html+=`<div class="empty-message">${t('noIncome')}</div>`;
     else md.income.forEach(inc=>html+=`<div class="income-item flex-between"><span><b>${inc.source}</b> (${inc.member})</span><span>${formatMoney(inc.amount)}</span></div>`);
@@ -313,14 +303,14 @@
   function showIncomeModal(md) {
     let modalDiv = document.createElement("div"); modalDiv.className = "modal";
     let incomeList = md.income.map((inc,idx)=>`<div class="income-item flex-between" style="margin-bottom:8px;"><span><b>${inc.source}</b> - ${inc.member} : ${formatMoney(inc.amount)}</span><div><button class="editIncomeBtn" data-idx="${idx}" style="margin-right:6px;">✏️</button><button class="deleteIncomeBtn" data-idx="${idx}" style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:20px;">🗑️</button></div></div>`).join('');
-    modalDiv.innerHTML = `<div class="modal-content"><h3>💰 Manage Income</h3><div id="incomeListContainer">${incomeList || "<p>No income sources</p>"}</div><div style="margin-top:16px;"><input type="text" id="newIncSource" placeholder="Source (e.g., Salary)" style="width:100%;"><input type="number" id="newIncAmount" placeholder="Amount (INR)" style="width:100%;"><select id="newIncMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('')}</select><button id="addIncomeModalBtn" class="btn" style="margin-top:8px;">+ Add Income</button></div><div style="margin-top:16px; text-align:right;"><button id="closeIncomeModal" class="btn-small">Close</button></div></div>`;
+    modalDiv.innerHTML = `<div class="modal-content"><h3>💰 Manage Income</h3><div id="incomeListContainer">${incomeList || "<p>No income sources</p>"}</div><div style="margin-top:16px;"><input type="text" id="newIncSource" placeholder="Source (e.g., Salary)" style="width:100%;"><input type="number" id="newIncAmount" placeholder="Amount (INR)" style="width:100%;"><select id="newIncMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('') || '<option>No family members added</option>'}</select><button id="addIncomeModalBtn" class="btn" style="margin-top:8px;">+ Add Income</button></div><div style="margin-top:16px; text-align:right;"><button id="closeIncomeModal" class="btn-small">Close</button></div></div>`;
     document.body.appendChild(modalDiv);
     document.getElementById("addIncomeModalBtn")?.addEventListener("click",()=>{
       let src = document.getElementById("newIncSource").value.trim();
       let amt = parseInt(document.getElementById("newIncAmount").value);
       let mem = document.getElementById("newIncMember").value;
-      if(src && amt>0){ md.income.push({ source:src, amount:amt, member:mem }); saveAppData(); modalDiv.remove(); showIncomeModal(md); }
-      else alert("Enter valid source and amount");
+      if(src && amt>0 && mem && mem !== 'No family members added'){ md.income.push({ source:src, amount:amt, member:mem }); saveAppData(); modalDiv.remove(); showIncomeModal(md); }
+      else alert("Enter valid source and amount, and add family members in Profile first.");
     });
     document.querySelectorAll(".editIncomeBtn").forEach(btn=>btn.addEventListener("click",()=>{
       let idx = parseInt(btn.dataset.idx); let inc = md.income[idx];
@@ -337,15 +327,16 @@
   function renderAdd() {
     let md = getCurrMonthData();
     let categories = Object.keys(md.budgets);
+    let familyOptions = appData.familyMembers.length > 0 ? appData.familyMembers.map(m=>`<option>${m}</option>`).join('') : '<option disabled>No family members added. Add in Profile.</option>';
     let html=`<div class="card"><h3>➕ ${t('addExpense')}</h3><input id="expAmount" placeholder="${t('amount')} (INR)" type="number"><select id="expCat">`;
     if(categories.length === 0) html+=`<option>Add a category first in Budget tab</option>`;
     else categories.forEach(c=>html+=`<option>${c}</option>`);
-    html+=`</select><input id="expDate" type="date" value="${new Date().toISOString().slice(0,10)}"><input id="expNote" placeholder="${t('note')}"><select id="expMember">${appData.familyMembers.map(m=>`<option>${m}</option>`).join('')}</select><button id="saveExpenseBtn" class="btn">${t('save')}</button></div><div class="card"><h4>📜 ${t('recent')}</h4>`;
+    html+=`</select><input id="expDate" type="date" value="${new Date().toISOString().slice(0,10)}"><input id="expNote" placeholder="${t('note')}"><select id="expMember">${familyOptions}</select><button id="saveExpenseBtn" class="btn">${t('save')}</button></div><div class="card"><h4>📜 ${t('recent')}</h4>`;
     if(md.expenses.length === 0) html+=`<div class="empty-message">${t('noExpenses')}</div>`;
     else md.expenses.slice().reverse().slice(0,10).forEach(exp=>{ html+=`<div class="transaction-item flex-between"><span>${exp.category} ${formatMoney(exp.amount)} (${exp.date.slice(5)})</span><span><button class="delTrans" data-id="${exp.id}">🗑️ ${t('delete')}</button></span></div>`; });
     html+=`</div>`;
     document.getElementById("addScreen").innerHTML = html;
-    document.getElementById("saveExpenseBtn")?.addEventListener("click",()=>{ let amount=parseInt(document.getElementById("expAmount").value); let cat=document.getElementById("expCat").value; let date=document.getElementById("expDate").value; let note=document.getElementById("expNote").value; let member=document.getElementById("expMember").value; if(amount && cat && cat!=='Add a category first in Budget tab'){ let id="e"+Date.now(); md.expenses.push({id,amount,category:cat,date,note,member}); saveAppData(); renderAdd(); } else alert("Add a budget category first in Budget tab."); });
+    document.getElementById("saveExpenseBtn")?.addEventListener("click",()=>{ let amount=parseInt(document.getElementById("expAmount").value); let cat=document.getElementById("expCat").value; let date=document.getElementById("expDate").value; let note=document.getElementById("expNote").value; let member=document.getElementById("expMember").value; if(amount && cat && cat!=='Add a category first in Budget tab' && member && member !== 'No family members added. Add in Profile.'){ let id="e"+Date.now(); md.expenses.push({id,amount,category:cat,date,note,member}); saveAppData(); renderAdd(); } else alert("Add a budget category and family member first."); });
     document.querySelectorAll(".delTrans").forEach(btn=>btn.addEventListener("click",(e)=>{ let id=btn.dataset.id; md.expenses=md.expenses.filter(e=>e.id!=id); saveAppData(); renderAdd(); }));
   }
 
@@ -362,15 +353,25 @@
   }
 
   function renderProfile() {
-    let html=`<div class="card"><label>👤 ${t('userName')}</label><input id="userNameInput" value="${appData.userName}"><button id="saveProfileBtn" class="btn" style="margin-top:8px;">${t('save')}</button></div>
+    let familyHtml = `<div class="card"><h4>👨‍👩‍👧 ${t('familyMembers')}</h4>`;
+    if(appData.familyMembers.length === 0) familyHtml += `<div class="empty-message">No family members added. Add below.</div>`;
+    else {
+      appData.familyMembers.forEach((member, idx) => {
+        familyHtml += `<div class="family-item flex-between"><span>${member}</span><button class="deleteFamilyBtn" data-idx="${idx}" style="background:#dc3545; color:white; border:none; padding:4px 12px; border-radius:20px;">${t('delete')}</button></div>`;
+      });
+    }
+    familyHtml += `<div class="flex-between" style="margin-top:12px;"><input type="text" id="newMemberName" placeholder="New member name" style="flex:1; margin-right:8px;"><button id="addFamilyBtn" class="btn-small">+ ${t('addMember')}</button></div></div>`;
+    
+    let html = `<div class="card"><label>👤 ${t('userName')}</label><input id="userNameInput" value="${appData.userName}"><button id="saveProfileBtn" class="btn" style="margin-top:8px;">${t('save')}</button></div>
     <div class="card"><label>🔐 ${t('changePin')}</label><input id="newPin" type="password" maxlength="4" placeholder="new 4-digit"><button id="changePinBtn" class="btn" style="margin-top:8px;">Update</button></div>
     <div class="card"><label>⏱️ ${t('autoLock')}</label><input id="lockTimer" type="number" value="${appData.settings.autoLockMinutes}"><button id="setLockBtn" class="btn" style="margin-top:8px;">Set</button></div>
     <div class="card"><label>💱 ${t('currency')}</label><select id="currencySelect"><option value="INR" ${currentCurrency==='INR'?'selected':''}>Indian Rupee (₹)</option><option value="USD" ${currentCurrency==='USD'?'selected':''}>US Dollar ($)</option><option value="EUR" ${currentCurrency==='EUR'?'selected':''}>Euro (€)</option><option value="GBP" ${currentCurrency==='GBP'?'selected':''}>British Pound (£)</option></select><button id="setCurrencyBtn" class="btn">Apply</button></div>
     <div class="card"><label>🌐 ${t('language')}</label><select id="langSelect"><option value="en" ${currentLang==='en'?'selected':''}>English</option><option value="hi" ${currentLang==='hi'?'selected':''}>हिंदी (Hindi)</option></select><button id="setLangBtn" class="btn">Apply</button></div>
+    ${familyHtml}
     <div class="card"><h4>🏅 ${t('badges')}</h4>${appData.challenges.badges.map(b=>`<span class="badge">🎖️ ${b.name}</span>`).join('') || 'No badges yet'}</div>
-    <div class="card"><h4>📋 All Features Included</h4><ul class="feature-list"><li>PIN Lock Screen</li><li>Dashboard with Summary Cards</li><li>Monthly Budget Planner (Permanent Categories)</li><li>Expense Entry with Receipt Photo</li><li>EMI & Loan Tracker</li><li>Savings Goals (incl. Emergency Fund)</li><li>Investment Tracker & 80C Monitor</li><li>Reports & Charts (Pie, Bar, Line)</li><li>Smart AI Suggestions (50-30-20)</li><li>Family Members & Shared Expenses</li><li>Bill Reminders with Due Dates</li><li>Monthly Challenges & Badges</li><li>Edit Mode (Inline Editing & Category Deletion)</li><li>Data Encryption & Export/Import</li><li>Net Worth Calculator</li><li>Payday Countdown</li><li>Recurring Expenses</li><li>Spending Pattern Detector</li><li>PWA Installable</li><li>Currency & Language Switcher</li><li>Sign Up / Login with PIN</li></ul></div>
     <div class="card"><button id="exportDataBtn" class="btn">📥 Export Data (JSON)</button><button id="resetAllBtn" style="background:#dc3545; margin-left:8px;" class="btn">⚠️ Reset All Data</button><button id="logoutBtn" style="background:#6c757d; margin-left:8px;" class="btn">🚪 Logout</button></div>`;
     document.getElementById("profileScreen").innerHTML = html;
+    
     document.getElementById("saveProfileBtn")?.addEventListener("click",()=>{ appData.userName=document.getElementById("userNameInput").value; saveAppData(); renderProfile(); });
     document.getElementById("changePinBtn")?.addEventListener("click",()=>{ let newpin=document.getElementById("newPin").value; if(newpin.length===4) { appData.userPin = newpin; saveAppData(); alert("PIN changed!"); } else alert("Enter 4 digits"); });
     document.getElementById("setLockBtn")?.addEventListener("click",()=>{ appData.settings.autoLockMinutes=parseInt(document.getElementById("lockTimer").value); saveAppData(); resetAutoLock(); });
@@ -379,6 +380,25 @@
     document.getElementById("exportDataBtn")?.addEventListener("click",()=>{ let dataStr=JSON.stringify(appData); let blob=new Blob([dataStr],{type:"application/json"}); let url=URL.createObjectURL(blob); let a=document.createElement("a"); a.href=url; a.download="budgetsphere_backup.json"; a.click(); });
     document.getElementById("resetAllBtn")?.addEventListener("click",()=>{ if(confirm("All data will be permanently deleted!")){ localStorage.clear(); location.reload(); } });
     document.getElementById("logoutBtn")?.addEventListener("click",()=>{ logout(); });
+    
+    document.getElementById("addFamilyBtn")?.addEventListener("click",()=>{
+      let newName = document.getElementById("newMemberName").value.trim();
+      if(newName && !appData.familyMembers.includes(newName)) {
+        appData.familyMembers.push(newName);
+        saveAppData();
+        renderProfile();
+      } else alert("Enter a valid unique name");
+    });
+    document.querySelectorAll(".deleteFamilyBtn").forEach(btn=>{
+      btn.addEventListener("click",(e)=>{
+        let idx = parseInt(btn.dataset.idx);
+        if(confirm(`Remove ${appData.familyMembers[idx]}?`)) {
+          appData.familyMembers.splice(idx,1);
+          saveAppData();
+          renderProfile();
+        }
+      });
+    });
   }
 
   // EVENT LISTENERS
